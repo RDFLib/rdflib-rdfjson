@@ -76,7 +76,9 @@ class RdfJsonParser(Parser):
 
         data = source.getByteStream().read()
         objs = json.loads(data)
+        return self.parse_json(objs, sink, **args)
 
+    def parse_json(self, objs, sink, **args):
         # check if pretty-json
         keys = objs.keys()
         pretty = 0
