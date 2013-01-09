@@ -3,6 +3,12 @@
 import sys
 import re
 
+try:
+    import multiprocessing
+    del multiprocessing
+except:
+    pass
+
 def setup_python3():
     # Taken from "distribute" setup.py
     from distutils.filelist import FileList
@@ -45,7 +51,7 @@ install_requires = ["rdflib>=3.0",
                     "rdfextras>=0.1", 
                     ],
 
-if sys.version_info[:2] < (2.6):
+if sys.version_info[:2] < (2, 6):
     install_requires.append(0, "simplejson")
 
 config = dict(
