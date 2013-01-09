@@ -1,4 +1,5 @@
 include *.md
+include example.py
 recursive-include rdflib_rdfjson *.py
 include setup.*
 graft test
