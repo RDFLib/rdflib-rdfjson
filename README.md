@@ -14,3 +14,5 @@ other JSON serialisations of RDF.
 See:
   http://code.google.com/p/rdflib/issues/detail?id=76
 
+[![Build Status](https://travis-ci.org/RDFLib/rdflib-rdfjson.png?branch=master)](https://travis-ci.org/RDFLib/rdflib-rdfjson)
+
