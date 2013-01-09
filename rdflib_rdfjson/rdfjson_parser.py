@@ -11,16 +11,14 @@
 This serialiser will read in an RDF/JSON formatted document and create
 an RDF graph
 
-See:
-  http://docs.api.talis.com/platform-api/output-types/rdf-json
+See: http://docs.api.talis.com/platform-api/output-types/rdf-json
 
 It was originally written by Rob Sanderson as a plugin for RDFLib 2.x.
 This version modifies the import paths for compatibility with RDFLib 3.x
 and changes its name to RdfJsonParser due to the large number of
 other JSON serialisations of RDF.
 
-See:
-  http://code.google.com/p/rdflib/issues/detail?id=76
+See: http://code.google.com/p/rdflib/issues/detail?id=76
 
 
 """
@@ -28,46 +26,44 @@ See:
 __all__ = ['RdfJsonParser']
 
 import logging
-try:
-    import json
-except ImportError:
-    import simplejson as json
+
+import json
 
 from rdflib.parser import Parser
 from rdflib.term import URIRef, BNode, Literal
 log = logging.getLogger(__name__)
 
+
 class RdfJsonParser(Parser):
-    
+
     def __init__(self):
         pass
 
     def parse(self, source, sink, **args):
         """
         Parse an RDF/JSON-formatted document and create an RDF graph.
-        
+
         Params:
-        :source: a stream (a URL, a file or a StringIO object) or 
-                 a string (of data), as per the standard API for 
-                 rdflib parsers.
+        :source: a stream (a URL, a file or a StringIO object) or
+        a string (of data), as per the standard API for rdflib parsers.
 
         Example usage:
 
         >>> from rdflib import Graph, plugin
         >>> from rdflib.parser import Parser
-        >>> plugin.register("rdf-json", Parser, 
+        >>> plugin.register("rdf-json", Parser,
         ...    "rdfextras.parsers.rdfjson", "RdfJsonParser")
         ...
         >>> g = Graph()
         >>> testrdfjson = '''{
-        ...   "http://example.org/about" : 
+        ...   "http://example.org/about" :
         ...     {
-        ...        "http://purl.org/dc/elements/1.1/title": [ 
-        ...             { "type" : "literal" , "value" : "Anna's Homepage." } 
+        ...        "http://purl.org/dc/elements/1.1/title": [
+        ...             { "type" : "literal" , "value" : "Anna's Homepage." }
         ...         ]
         ...     }
         ... }'''
-        ... 
+        ...
         >>> g.parse(data=testrdfjson, format="rdf-json") # doctest: +ELLIPSIS
         <Graph identifier=... (<class 'rdflib.graph.Graph'>)>
         >>> rdfxml = g.serialize(format="xml")
@@ -75,7 +71,7 @@ class RdfJsonParser(Parser):
         """
 
         data = source.getByteStream().read()
-        objs = json.loads(data)
+        objs = json.loads(data.decode('utf8'))
         return self.parse_json(objs, sink, **args)
 
     def parse_json(self, objs, sink, **args):
@@ -102,7 +98,7 @@ class RdfJsonParser(Parser):
                 for (p, v) in preds.items():
                     if pretty:
                         dpidx = p.find('$')
-                        if dpidx == -1:                            
+                        if dpidx == -1:
                             dpidx = p.find(':')
                         if dpidx > -1:
                             pfx = p[:dpidx]
@@ -115,7 +111,7 @@ class RdfJsonParser(Parser):
                             pred = URIRef(p)
                     else:
                         pred = URIRef(p)
-                        
+
                     for vh in v:
                         value = vh['value']
                         vt = vh['type']
@@ -123,7 +119,7 @@ class RdfJsonParser(Parser):
                             args = {}
                             lang = vh.get('lang', '')
                             if lang:
-                                args['lang'] = lang                            
+                                args['lang'] = lang
                             datatype = vh.get('datatype', '')
                             if datatype:
                                 args['datatype'] = datatype
