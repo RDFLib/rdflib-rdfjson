@@ -9,12 +9,13 @@ try:
 except:
     pass
 
+
 def setup_python3():
     # Taken from "distribute" setup.py
     from distutils.filelist import FileList
     from distutils import dir_util, file_util, util, log
     from os.path import join
-  
+
     tmp_src = join("build", "src")
     log.set_verbosity(1)
     fl = FileList()
@@ -28,13 +29,14 @@ def setup_python3():
         outf, copied = file_util.copy_file(f, join(tmp_src, f), update=1)
         if copied and outf.endswith(".py"):
             outfiles_2to3.append(outf)
-  
+
     util.run_2to3(outfiles_2to3)
-  
+
     # arrange setup to use the copy
     sys.path.insert(0, tmp_src)
 
     return tmp_src
+
 
 # Find version. We have to do this because we can't import it in Python 3 until
 # its been automatically converted in the setup process.
@@ -47,30 +49,29 @@ def find_version(filename):
 
 __version__ = find_version('rdflib_rdfjson/__init__.py')
 
-install_requires = ["rdflib>=3.0", 
-                    "rdfextras>=0.1", 
-                    ],
+install_requires = ["rdflib>=3.0",
+                    "rdfextras>=0.1",
+                    ]
 
 if sys.version_info[:2] < (2, 6):
-    install_requires.append(0, "simplejson")
+    install_requires.append("simplejson")
 
 config = dict(
-    name = 'rdflib-rdfjson',
-    version = __version__,
-    description = "rdflib extension adding RDF/JSON parser and serializer",
-    author = "Graham Higgins",
-    author_email = "gjhiggins@gmail.com",
-    url = "http://github.com/RDFLib/rdflib-rdfjson",
+    name='rdflib-rdfjson',
+    version=__version__,
+    description="rdflib extension adding RDF/JSON parser and serializer",
+    author="Graham Higgins",
+    author_email="gjhiggins@gmail.com",
+    url="http://github.com/RDFLib/rdflib-rdfjson",
 
-    download_url = "https://github.com/RDFLib/rdflib-rdfjson/zipball/master",
-    license = "BSD",
-    platforms = ["any"],
-    long_description = \
-    """
-    This parser/serialiser will 
+    download_url="https://github.com/RDFLib/rdflib-rdfjson/zipball/master",
+    license="BSD",
+    platforms=["any"],
+    long_description="""\
+    This parser/serialiser will
 
-    * read in an RDF/JSON formatted document and create an RDF graph 
-    * serialize an RDF graph to RDF/JSON formatted output 
+    * read in an RDF/JSON formatted document and create an RDF graph
+    * serialize an RDF graph to RDF/JSON formatted output
 
     See:
       http://docs.api.talis.com/platform-api/output-types/rdf-json
@@ -83,23 +84,24 @@ config = dict(
     See:
       http://code.google.com/p/rdflib/issues/detail?id=76
     """,
-    classifiers = ["Programming Language :: Python",
-                   "Programming Language :: Python :: 2",
-                   "Programming Language :: Python :: 3",
-                   "Programming Language :: Python :: 2.5",
-                   "Programming Language :: Python :: 2.6",
-                   "Programming Language :: Python :: 2.7",
-                   "Programming Language :: Python :: 3.2",
-                   "License :: OSI Approved :: BSD License",
-                   "Topic :: Software Development :: Libraries :: Python Modules",
-                   "Operating System :: OS Independent",
-                   "Natural Language :: English",
-                   ],
-    packages = ["rdflib_rdfjson",
+    classifiers=[
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 2",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 2.5",
+        "Programming Language :: Python :: 2.6",
+        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3.2",
+        "License :: OSI Approved :: BSD License",
+        "Topic :: Software Development :: Libraries :: Python Modules",
+        "Operating System :: OS Independent",
+        "Natural Language :: English",
+        ],
+    packages=["rdflib_rdfjson",
                 ],
-    test_suite = "test",
-    install_requires = install_requires,
-    entry_points = {
+    test_suite="test",
+    install_requires=install_requires,
+    entry_points={
         'rdf.plugins.parser': [
             'rdf-json = rdflib_rdfjson.rdfjson_parser:RdfJsonParser',
         ],
@@ -116,10 +118,9 @@ if sys.version_info[0] >= 3:
 else:
     try:
         from setuptools import setup
-        config.update({'test_suite' : "nose.collector"})
+        config.update({'test_suite': "nose.collector"})
     except ImportError:
         from distutils.core import setup
 
 
 setup(**config)
-

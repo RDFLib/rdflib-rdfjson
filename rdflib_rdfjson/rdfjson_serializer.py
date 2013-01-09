@@ -71,7 +71,10 @@ from rdflib.serializer import Serializer
 from rdflib.term import URIRef
 from rdflib.term import Literal
 
-import json
+try:
+    import json
+except ImportError:
+    import simplejson as json
 
 from rdflib.util import uniq
 

@@ -27,8 +27,10 @@ __all__ = ['RdfJsonParser']
 
 import logging
 
-import json
-
+try:
+    import json
+except ImportError:
+    import simplejson as json
 from rdflib.parser import Parser
 from rdflib.term import URIRef, BNode, Literal
 log = logging.getLogger(__name__)
