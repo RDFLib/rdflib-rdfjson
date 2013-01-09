@@ -23,39 +23,54 @@ rdf_data = """\
     <foaf:depiction rdf:resource="http://example.org/pic.jpg" />
     <foaf:nick>wildling</foaf:nick>
     <foaf:nick>wilda</foaf:nick>
-    <foaf:mbox_sha1sum>69e31bbcf58d432950127593e292a55975bc66fd</foaf:mbox_sha1sum>
+    <foaf:mbox_sha1sum>
+      69e31bbcf58d432950127593e292a55975bc66fd
+    </foaf:mbox_sha1sum>
   </rdf:Description>
 </rdf:RDF>
 """
 
 json_data = """\
 {
-    "http://example.org/about" : {
-        "http://purl.org/dc/elements/1.1/creator" : [ { "value" : "Anna Wilder", "type" : "literal" } ],
-        "http://purl.org/dc/elements/1.1/title"   : [ { "value" : "Anna's Homepage", "type" : "literal", "lang" : "en" } ] ,
-        "http://xmlns.com/foaf/0.1/maker"         : [ { "value" : "_:person", "type" : "bnode" } ]
-    } ,
- 
-    "_:person" : {
-        "http://xmlns.com/foaf/0.1/homepage"      : [ { "value" : "http://example.org/about", "type" : "uri" } ] ,
-        "http://xmlns.com/foaf/0.1/made"          : [ { "value" : "http://example.org/about", "type" : "uri" } ] ,
-        "http://xmlns.com/foaf/0.1/name"          : [ { "value" : "Anna Wilder", "type" : "literal" } ] ,
-        "http://xmlns.com/foaf/0.1/firstName"     : [ { "value" : "Anna", "type" : "literal" } ] ,
-        "http://xmlns.com/foaf/0.1/surname"       : [ { "value" : "Wilder", "type" : "literal" } ] , 
-        "http://xmlns.com/foaf/0.1/depiction"     : [ { "value" : "http://example.org/pic.jpg", "type" : "uri" } ] ,
-        "http://xmlns.com/foaf/0.1/nick"          : [ 
-                                                      { "type" : "literal", "value" : "wildling"} , 
-                                                      { "type" : "literal", "value" : "wilda" } 
-                                                    ] ,
-        "http://xmlns.com/foaf/0.1/mbox_sha1sum"  : [ {  "value" : "69e31bbcf58d432950127593e292a55975bc66fd", "type" : "literal" } ] 
-    }
+  "http://example.org/about" : {
+    "http://purl.org/dc/elements/1.1/creator" :
+      [ { "value" : "Anna Wilder", "type" : "literal" } ],
+    "http://purl.org/dc/elements/1.1/title"   :
+      [ { "value" : "Anna's Homepage", "type" : "literal", "lang" : "en" } ] ,
+    "http://xmlns.com/foaf/0.1/maker"         :
+      [ { "value" : "_:person", "type" : "bnode" } ]
+  } ,
+
+  "_:person" : {
+    "http://xmlns.com/foaf/0.1/homepage"      :
+      [ { "value" : "http://example.org/about", "type" : "uri" } ] ,
+    "http://xmlns.com/foaf/0.1/made"          :
+      [ { "value" : "http://example.org/about", "type" : "uri" } ] ,
+    "http://xmlns.com/foaf/0.1/name"          :
+      [ { "value" : "Anna Wilder", "type" : "literal" } ] ,
+    "http://xmlns.com/foaf/0.1/firstName"     :
+      [ { "value" : "Anna", "type" : "literal" } ] ,
+    "http://xmlns.com/foaf/0.1/surname"       :
+      [ { "value" : "Wilder", "type" : "literal" } ] ,
+    "http://xmlns.com/foaf/0.1/depiction"     :
+      [ { "value" : "http://example.org/pic.jpg", "type" : "uri" } ] ,
+    "http://xmlns.com/foaf/0.1/nick"          :
+      [
+        { "type" : "literal", "value" : "wildling"} ,
+        { "type" : "literal", "value" : "wilda" }
+      ] ,
+    "http://xmlns.com/foaf/0.1/mbox_sha1sum"  :
+      [ {  "value" : "69e31bbcf58d432950127593e292a55975bc66fd",
+           "type" : "literal" } ]
+  }
 }"""
+
 
 class RdfJsonParserTestCase(unittest.TestCase):
 
     def setUp(self):
         self.graph = Graph()
-    
+
     def test_correct_num_triples(self):
         self.graph.parse(data=json_data, format="rdf-json")
         self.assert_(len(self.graph) == 12)
@@ -66,12 +81,13 @@ class RdfJsonParserTestCase(unittest.TestCase):
         g2.parse(data=rdf_data, format="xml")
         self.assert_(g2.isomorphic(self.graph) == True)
 
+
 class RdfJsonSerializerTestCase(unittest.TestCase):
     identifier = "rdflib_test"
 
     def setUp(self):
         self.graph = Graph()
-    
+
     def test_serialize_xml(self):
         self.graph.parse(data=json_data, format="rdf-json")
         res = self.graph.serialize(format="xml")
@@ -80,7 +96,9 @@ class RdfJsonSerializerTestCase(unittest.TestCase):
         self.assert_(self.graph.isomorphic(g2))
         log.debug("XML")
         log.debug(res)
-        self.assert_('''rdf:nodeID="na's Homepage"''' not in res and '''rdf:nodeID="na Wilder"''' not in res)
+        self.assert_(
+          '''rdf:nodeID="na's Homepage"''' not in str(res) \
+              and '''rdf:nodeID="na Wilder"''' not in str(res))
 
     def test_roundtrip_json(self):
         self.graph.parse(data=json_data, format="rdf-json")
@@ -91,7 +109,9 @@ class RdfJsonSerializerTestCase(unittest.TestCase):
         log.debug(res)
         self.assert_(len(self.graph) == 12 and len(g2) == 12)
         self.assert_(self.graph.isomorphic(g2))
-        self.assert_('''"_:na's Homepage"''' not in res and '''"value": "_:na Wilder"''' not in res)
+        self.assert_(
+          '''"_:na's Homepage"''' not in str(res) \
+              and '''"value": "_:na Wilder"''' not in str(res))
 
 
 """
@@ -101,9 +121,9 @@ Result of logging:
 FAIL: test_roundtrip_json (test.test_rdfjson.RdfJsonSerializerTestCase)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File ".../rdflib-rdfjson/test/test_rdfjson.py", line 94, in test_roundtrip_json
+  File "./test/test_rdfjson.py", line 94, in test_roundtrip_json
     self.assert_('''"_:na's Homepage"''' not in res)
-AssertionError: 
+AssertionError:
 -------------------- >> begin captured logging << --------------------
 test.test_rdfjson: DEBUG: RDFJSON
 test.test_rdfjson: DEBUG: {
@@ -189,9 +209,9 @@ test.test_rdfjson: DEBUG: {
 FAIL: test_serialize_xml (test.test_rdfjson.RdfJsonSerializerTestCase)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File ".../rdflib-rdfjson/test/test_rdfjson.py", line 83, in test_serialize_xml
+  File "./test/test_rdfjson.py", line 83, in test_serialize_xml
     self.assert_('''rdf:nodeID="na's Homepage"''' not in res)
-AssertionError: 
+AssertionError:
 -------------------- >> begin captured logging << --------------------
 test.test_rdfjson: DEBUG: XML
 test.test_rdfjson: DEBUG: <?xml version="1.0" encoding="UTF-8"?>
@@ -207,7 +227,9 @@ test.test_rdfjson: DEBUG: <?xml version="1.0" encoding="UTF-8"?>
   </rdf:Description>
   <rdf:Description rdf:nodeID="person">
     <ns1:firstName>Anna</ns1:firstName>
-    <ns1:mbox_sha1sum>69e31bbcf58d432950127593e292a55975bc66fd</ns1:mbox_sha1sum>
+    <ns1:mbox_sha1sum>
+      69e31bbcf58d432950127593e292a55975bc66fd
+    </ns1:mbox_sha1sum>
     <ns1:made rdf:resource="http://example.org/about"/>
     <ns1:surname>Wilder</ns1:surname>
     <ns1:nick>wildling</ns1:nick>
@@ -226,15 +248,16 @@ Ran 4 tests in 0.425s
 """
 
 """
-Ah so, slightly different results for Jython output which escapes the over-precise test
+Ah so, slightly different results for Jython output which escapes the
+over-precise test
 
 ======================================================================
 FAIL: test_roundtrip_json (test.test_rdfjson.RdfJsonSerializerTestCase)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/home/gjh/.virtualenvs/rdflib/src/rdflib-rdfjson/test/test_rdfjson.py", line 96, in test_roundtrip_json
+  File "./test/test_rdfjson.py", line 96, in test_roundtrip_json
     self.assert_(True is False) # Force failure in order to trigger logging
-AssertionError: 
+AssertionError:
 -------------------- >> begin captured logging << --------------------
 test.test_rdfjson: DEBUG: RDFJSON
 test.test_rdfjson: DEBUG: {
@@ -320,9 +343,9 @@ test.test_rdfjson: DEBUG: {
 FAIL: test_serialize_xml (test.test_rdfjson.RdfJsonSerializerTestCase)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/home/gjh/.virtualenvs/rdflib/src/rdflib-rdfjson/test/test_rdfjson.py", line 84, in test_serialize_xml
+  File "./test/test_rdfjson.py", line 84, in test_serialize_xml
     self.assert_(True is False) # Force failure in order to trigger logging
-AssertionError: 
+AssertionError:
 -------------------- >> begin captured logging << --------------------
 test.test_rdfjson: DEBUG: XML
 test.test_rdfjson: DEBUG: <?xml version="1.0" encoding="UTF-8"?>
@@ -341,7 +364,9 @@ test.test_rdfjson: DEBUG: <?xml version="1.0" encoding="UTF-8"?>
     <ns1:firstName>Anna</ns1:firstName>
     <ns1:nick>wildling</ns1:nick>
     <ns1:nick>wilda</ns1:nick>
-    <ns1:mbox_sha1sum>69e31bbcf58d432950127593e292a55975bc66fd</ns1:mbox_sha1sum>
+    <ns1:mbox_sha1sum>
+      69e31bbcf58d432950127593e292a55975bc66fd
+    </ns1:mbox_sha1sum>
     <ns1:surname>Wilder</ns1:surname>
     <ns1:homepage rdf:resource="http://example.org/about"/>
     <ns1:made rdf:resource="http://example.org/about"/>
@@ -349,4 +374,4 @@ test.test_rdfjson: DEBUG: <?xml version="1.0" encoding="UTF-8"?>
   </rdf:Description>
 </rdf:RDF>
 
-""" 
+"""
